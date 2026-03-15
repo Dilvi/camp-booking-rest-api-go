@@ -10,10 +10,10 @@ import (
 
 func main() {
 	cfg := config.Load()
-	router := app.NewRouter()
+	application := app.New(cfg)
 	addr := ":" + cfg.AppPort
 	fmt.Println("server started on :8080")
-	if err := http.ListenAndServe(addr, router); err != nil {
+	if err := http.ListenAndServe(addr, application.Router); err != nil {
 		panic(err)
 	}
 }
