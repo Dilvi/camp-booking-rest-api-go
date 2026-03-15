@@ -5,12 +5,15 @@ import (
 	"net/http"
 
 	"github.com/dilvi/camp-booking-rest-api-go/internal/app"
+	"github.com/dilvi/camp-booking-rest-api-go/internal/config"
 )
 
 func main() {
+	cfg := config.Load()
 	router := app.NewRouter()
+	addr := ":" + cfg.AppPort
 	fmt.Println("server started on :8080")
-	if err := http.ListenAndServe(":8080", router); err != nil {
+	if err := http.ListenAndServe(addr, router); err != nil {
 		panic(err)
 	}
 }
