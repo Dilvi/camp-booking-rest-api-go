@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 
 	"github.com/dilvi/camp-booking-rest-api-go/internal/app"
@@ -10,7 +11,10 @@ import (
 
 func main() {
 	cfg := config.Load()
-	application := app.New(cfg)
+	application, err := app.New(cfg)
+	if err != nil {
+		log.Fatal(err)
+	}
 	addr := ":" + cfg.AppPort
 	fmt.Println("server started on :8080")
 	if err := http.ListenAndServe(addr, application.Router); err != nil {
