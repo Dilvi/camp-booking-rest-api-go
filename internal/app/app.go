@@ -6,12 +6,15 @@ import (
 
 	"github.com/dilvi/camp-booking-rest-api-go/internal/config"
 	"github.com/dilvi/camp-booking-rest-api-go/internal/database"
+	"github.com/dilvi/camp-booking-rest-api-go/internal/handler"
+	"github.com/dilvi/camp-booking-rest-api-go/internal/repository/postgres"
+	"github.com/dilvi/camp-booking-rest-api-go/internal/service"
 )
 
 type App struct {
 	Config config.Config
 	Router *http.ServeMux
-	DB *sql.DB
+	DB     *sql.DB
 }
 
 func New(cfg config.Config) (*App, error) {
@@ -20,11 +23,15 @@ func New(cfg config.Config) (*App, error) {
 		return nil, err
 	}
 
-	router := NewRouter()
+	userRepo := postgres.NewUserRepository(db)
+	authService := service.NewAuthService(userRepo)
+	authHandler := handler.NewAuthHandler(authService)
+
+	router := NewRouter(authHandler)
 
 	return &App{
 		Config: cfg,
 		Router: router,
-		DB: db,
+		DB:     db,
 	}, nil
 }
