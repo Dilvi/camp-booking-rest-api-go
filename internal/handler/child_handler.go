@@ -8,6 +8,7 @@ import (
 
 	"github.com/dilvi/camp-booking-rest-api-go/internal/dto"
 	"github.com/dilvi/camp-booking-rest-api-go/internal/middleware"
+	"github.com/dilvi/camp-booking-rest-api-go/internal/respond"
 	"github.com/dilvi/camp-booking-rest-api-go/internal/service"
 )
 
@@ -21,25 +22,25 @@ func NewChildHandler(childService *service.ChildService) *ChildHandler {
 
 func (h *ChildHandler) Create(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		respond.Error(w, http.StatusMethodNotAllowed, "method not allowed")
 		return
 	}
 
 	claims, ok := middleware.GetUserFromContext(r.Context())
 	if !ok {
-		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		respond.Error(w, http.StatusUnauthorized, "unauthorized")
 		return
 	}
 
 	var req dto.CreateChildRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "invalid request body", http.StatusBadRequest)
+		respond.Error(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
 
 	child, err := h.childService.Create(claims.UserID, req)
 	if err != nil {
-		http.Error(w, "failed to create child", http.StatusBadRequest)
+		respond.Error(w, http.StatusBadRequest, "failed to create child")
 		return
 	}
 
@@ -56,24 +57,24 @@ func (h *ChildHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(resp)
+	respond.JSON(w, http.StatusOK, resp)
 }
 
 func (h *ChildHandler) List(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		respond.Error(w, http.StatusMethodNotAllowed, "method not allowed")
 		return
 	}
 
 	claims, ok := middleware.GetUserFromContext(r.Context())
 	if !ok {
-		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		respond.Error(w, http.StatusUnauthorized, "unauthorized")
 		return
 	}
 
 	children, err := h.childService.GetAllByUserID(claims.UserID)
 	if err != nil {
-		http.Error(w, "failed to get children", http.StatusInternalServerError)
+		respond.Error(w, http.StatusInternalServerError, "failed to get children")
 		return
 	}
 
@@ -92,37 +93,37 @@ func (h *ChildHandler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(resp)
+	respond.JSON(w, http.StatusOK, resp)
 }
 
 func (h *ChildHandler) Update(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPut {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		respond.Error(w, http.StatusMethodNotAllowed, "method not allowed")
 		return
 	}
 
 	claims, ok := middleware.GetUserFromContext(r.Context())
 	if !ok {
-		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		respond.Error(w, http.StatusUnauthorized, "unauthorized")
 		return
 	}
 
 	idStr := strings.TrimPrefix(r.URL.Path, "/children/")
 	childID, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		http.Error(w, "invalid child id", http.StatusBadRequest)
+		respond.Error(w, http.StatusBadRequest, "invalid child id")
 		return
 	}
 
 	var req dto.UpdateChildRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "invalid request body", http.StatusBadRequest)
+		respond.Error(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
 
 	child, err := h.childService.Update(claims.UserID, childID, req)
 	if err != nil {
-		http.Error(w, "failed to update child", http.StatusBadRequest)
+		respond.Error(w, http.StatusBadRequest, "failed to update child")
 		return
 	}
 
@@ -138,5 +139,5 @@ func (h *ChildHandler) Update(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(resp)
+	respond.JSON(w, http.StatusOK, resp)
 }

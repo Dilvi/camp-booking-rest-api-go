@@ -6,6 +6,7 @@ import (
 
 	"github.com/dilvi/camp-booking-rest-api-go/internal/dto"
 	"github.com/dilvi/camp-booking-rest-api-go/internal/middleware"
+	"github.com/dilvi/camp-booking-rest-api-go/internal/respond"
 	"github.com/dilvi/camp-booking-rest-api-go/internal/service"
 )
 
@@ -19,19 +20,19 @@ func NewAuthHandler(authService *service.AuthService) *AuthHandler {
 
 func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		respond.Error(w, http.StatusMethodNotAllowed, "method not allowed")
 		return
 	}
 
 	var req dto.RegisterRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "invalid request body", http.StatusBadRequest)
+		respond.Error(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
 
 	user, err := h.authService.Register(req)
 	if err != nil {
-		http.Error(w, "failed to register user", http.StatusInternalServerError)
+		respond.Error(w, http.StatusInternalServerError, "failed to register user")
 		return
 	}
 
@@ -46,24 +47,24 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(resp)
+	respond.JSON(w, http.StatusOK, resp)
 }
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodPost {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		respond.Error(w, http.StatusMethodNotAllowed, "method not allowed")
 		return
 	}
 
 	var req dto.LoginRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "invalid request body", http.StatusBadRequest)
+		respond.Error(w, http.StatusBadRequest, "invalid request body")
 		return
 	}
 
 	token, err := h.authService.Login(req)
 	if err != nil {
-		http.Error(w, "invalid email or password", http.StatusUnauthorized)
+		respond.Error(w, http.StatusUnauthorized, "invalid email or password")
 		return
 	}
 
@@ -73,13 +74,13 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusOK)
-	_ = json.NewEncoder(w).Encode(resp)
+	respond.JSON(w, http.StatusOK, resp)
 }
 
 func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 	claims, ok := middleware.GetUserFromContext(r.Context())
 	if !ok {
-		http.Error(w, "unauthorized", http.StatusUnauthorized)
+		respond.Error(w, http.StatusUnauthorized, "unauthorized")
 		return
 	}
 
@@ -90,5 +91,5 @@ func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(resp)
+	respond.JSON(w, http.StatusOK, resp)
 }

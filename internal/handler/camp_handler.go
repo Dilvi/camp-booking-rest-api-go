@@ -2,12 +2,12 @@ package handler
 
 import (
 	"database/sql"
-	"encoding/json"
 	"net/http"
 	"strconv"
 	"strings"
 
 	"github.com/dilvi/camp-booking-rest-api-go/internal/dto"
+	"github.com/dilvi/camp-booking-rest-api-go/internal/respond"
 	"github.com/dilvi/camp-booking-rest-api-go/internal/service"
 )
 
@@ -21,13 +21,13 @@ func NewCampHandler(campService *service.CampService) *CampHandler {
 
 func (h *CampHandler) List(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		respond.Error(w, http.StatusMethodNotAllowed, "method not allowed")
 		return
 	}
 
 	camps, err := h.campService.GetAll()
 	if err != nil {
-		http.Error(w, "failed to get camps", http.StatusInternalServerError)
+		respond.Error(w, http.StatusInternalServerError, "failed to get camps")
 		return
 	}
 
@@ -49,29 +49,29 @@ func (h *CampHandler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(resp)
+	respond.JSON(w, http.StatusOK, resp)
 }
 
 func (h *CampHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	if r.Method != http.MethodGet {
-		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+		respond.Error(w, http.StatusMethodNotAllowed, "method not allowed")
 		return
 	}
 
 	idStr := strings.TrimPrefix(r.URL.Path, "/camps/")
 	campID, err := strconv.ParseInt(idStr, 10, 64)
 	if err != nil {
-		http.Error(w, "invalid camp id", http.StatusBadRequest)
+		respond.Error(w, http.StatusBadRequest, "invalid camp id")
 		return
 	}
 
 	camp, err := h.campService.GetByID(campID)
 	if err != nil {
 		if err == sql.ErrNoRows {
-			http.Error(w, "camp not found", http.StatusNotFound)
+			respond.Error(w, http.StatusNotFound, "camp not found")
 			return
 		}
-		http.Error(w, "failed to get camp", http.StatusInternalServerError)
+		respond.Error(w, http.StatusInternalServerError, "failed to get camp")
 		return
 	}
 
@@ -90,5 +90,5 @@ func (h *CampHandler) GetByID(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(resp)
+	respond.JSON(w, http.StatusOK, resp)
 }

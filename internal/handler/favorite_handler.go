@@ -1,13 +1,13 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
 	"strconv"
 	"strings"
 
 	"github.com/dilvi/camp-booking-rest-api-go/internal/dto"
 	"github.com/dilvi/camp-booking-rest-api-go/internal/middleware"
+	"github.com/dilvi/camp-booking-rest-api-go/internal/respond"
 	"github.com/dilvi/camp-booking-rest-api-go/internal/service"
 )
 
@@ -64,5 +64,5 @@ func (h *FavoriteHandler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(resp)
+	respond.JSON(w, http.StatusOK, resp)
 }

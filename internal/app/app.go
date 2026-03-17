@@ -13,7 +13,7 @@ import (
 
 type App struct {
 	Config config.Config
-	Router *http.ServeMux
+	Router http.Handler
 	DB     *sql.DB
 }
 

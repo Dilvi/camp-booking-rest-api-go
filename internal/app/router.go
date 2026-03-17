@@ -7,7 +7,7 @@ import (
 	"github.com/dilvi/camp-booking-rest-api-go/internal/middleware"
 )
 
-func NewRouter(authHandler *handler.AuthHandler, childHandler *handler.ChildHandler, campHandler *handler.CampHandler, favoriteHandler *handler.FavoriteHandler,bookingHandler *handler.BookingHandler, jwtSecret string) *http.ServeMux {
+func NewRouter(authHandler *handler.AuthHandler, childHandler *handler.ChildHandler, campHandler *handler.CampHandler, favoriteHandler *handler.FavoriteHandler,bookingHandler *handler.BookingHandler, jwtSecret string) http.Handler {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/health", handler.HealthHandler)
@@ -55,5 +55,8 @@ func NewRouter(authHandler *handler.AuthHandler, childHandler *handler.ChildHand
 	}
 	})))
 
-	return mux
+	handler := middleware.LoggingMiddleware(mux)
+	handler = middleware.RecoveryMiddleware(handler)
+
+	return handler
 }

@@ -6,6 +6,7 @@ import (
 
 	"github.com/dilvi/camp-booking-rest-api-go/internal/dto"
 	"github.com/dilvi/camp-booking-rest-api-go/internal/middleware"
+	"github.com/dilvi/camp-booking-rest-api-go/internal/respond"
 	"github.com/dilvi/camp-booking-rest-api-go/internal/service"
 )
 
@@ -22,13 +23,13 @@ func (h *BookingHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	var req dto.CreateBookingRequest
 	if err := json.NewDecoder(r.Body).Decode(&req); err != nil {
-		http.Error(w, "invalid body", http.StatusBadRequest)
+		respond.Error(w, http.StatusBadRequest, "invalid body")
 		return
 	}
 
 	booking, err := h.service.Create(claims.UserID, req.ChildID, req.CampID)
 	if err != nil {
-		http.Error(w, err.Error(), http.StatusBadRequest)
+		respond.Error(w, http.StatusBadRequest, err.Error())
 		return
 	}
 
@@ -41,7 +42,7 @@ func (h *BookingHandler) Create(w http.ResponseWriter, r *http.Request) {
 
 	w.Header().Set("Content-Type", "application/json")
 	w.WriteHeader(http.StatusCreated)
-	_ = json.NewEncoder(w).Encode(resp)
+	respond.JSON(w, http.StatusOK, resp)
 }
 
 func (h *BookingHandler) List(w http.ResponseWriter, r *http.Request) {
@@ -60,5 +61,5 @@ func (h *BookingHandler) List(w http.ResponseWriter, r *http.Request) {
 	}
 
 	w.Header().Set("Content-Type", "application/json")
-	_ = json.NewEncoder(w).Encode(resp)
+	respond.JSON(w, http.StatusOK, resp)
 }

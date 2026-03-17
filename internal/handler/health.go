@@ -1,14 +1,15 @@
 package handler
 
 import (
-	"encoding/json"
 	"net/http"
+
+	"github.com/dilvi/camp-booking-rest-api-go/internal/respond"
 )
 
 func HealthHandler(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
-	response := map[string]string{
+	resp := map[string]string{
 		"status": "ok",
 	}
-	json.NewEncoder(w).Encode(response)
+	respond.JSON(w, http.StatusOK, resp)
 }
