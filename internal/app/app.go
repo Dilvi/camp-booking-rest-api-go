@@ -39,7 +39,11 @@ func New(cfg config.Config) (*App, error) {
 	favoriteService := service.NewFavoriteService(favoriteRepo)
 	favoriteHandler := handler.NewFavoriteHandler(favoriteService)
 
-	router := NewRouter(authHandler, childHandler, campHandler, favoriteHandler, cfg.JWTSecret)
+	bookingRepo := postgres.NewBookingRepository(db)
+	bookingService := service.NewBookingService(bookingRepo, childRepo, campRepo)
+	bookingHandler := handler.NewBookingHandler(bookingService)
+
+	router := NewRouter(authHandler, childHandler, campHandler, favoriteHandler,bookingHandler, cfg.JWTSecret)
 
 	return &App{
 		Config: cfg,
