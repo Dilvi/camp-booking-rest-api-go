@@ -31,7 +31,11 @@ func New(cfg config.Config) (*App, error) {
 	childService := service.NewChildService(childRepo)
 	childHandler := handler.NewChildHandler(childService)
 
-	router := NewRouter(authHandler, childHandler, cfg.JWTSecret)
+	campRepo := postgres.NewCampRepository(db)
+	campService := service.NewCampService(campRepo)
+	campHandler := handler.NewCampHandler(campService)
+
+	router := NewRouter(authHandler, childHandler, campHandler, cfg.JWTSecret)
 
 	return &App{
 		Config: cfg,
