@@ -37,3 +37,30 @@ func (r *UserRepository) Create(user domain.User) (domain.User, error) {
 
 	return user, nil
 }
+
+func (r *UserRepository) GetByEmail(email string) (domain.User, error) {
+	query := `
+		SELECT id, first_name, last_name, phone, email, password_hash, role, created_at, updated_at
+		FROM users
+		WHERE email = $1
+	`
+
+	var user domain.User
+
+	err := r.db.QueryRow(query, email).Scan(
+		&user.ID,
+		&user.FirstName,
+		&user.LastName,
+		&user.Phone,
+		&user.Email,
+		&user.PasswordHash,
+		&user.Role,
+		&user.CreatedAt,
+		&user.UpdatedAt,
+	)
+	if err != nil {
+		return domain.User{}, err
+	}
+
+	return user, nil
+}

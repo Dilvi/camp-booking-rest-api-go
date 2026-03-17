@@ -24,10 +24,10 @@ func New(cfg config.Config) (*App, error) {
 	}
 
 	userRepo := postgres.NewUserRepository(db)
-	authService := service.NewAuthService(userRepo)
+	authService := service.NewAuthService(userRepo, cfg.JWTSecret)
 	authHandler := handler.NewAuthHandler(authService)
 
-	router := NewRouter(authHandler)
+	router := NewRouter(authHandler, cfg.JWTSecret)
 
 	return &App{
 		Config: cfg,
