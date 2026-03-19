@@ -1,0 +1,2 @@
+ALTER TABLE camps
+DROP COLUMN IF EXISTS image_url;

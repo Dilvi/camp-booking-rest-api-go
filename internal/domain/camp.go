@@ -6,6 +6,7 @@ type Camp struct {
 	ID                int64
 	Title             string
 	Location          string
+	ImageURL          string
 	PricePerDay       int
 	BookedCount       int
 	Description       string

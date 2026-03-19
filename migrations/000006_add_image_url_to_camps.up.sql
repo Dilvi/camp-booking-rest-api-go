@@ -1,0 +1,2 @@
+ALTER TABLE camps
+ADD COLUMN image_url TEXT NOT NULL DEFAULT '';

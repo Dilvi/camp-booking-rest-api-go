@@ -4,6 +4,7 @@ type CampResponse struct {
 	ID                int64  `json:"id"`
 	Title             string `json:"title"`
 	Location          string `json:"location"`
+	ImageURL          string `json:"image_url"`
 	PricePerDay       int    `json:"price_per_day"`
 	BookedCount       int    `json:"booked_count"`
 	Description       string `json:"description"`

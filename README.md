@@ -1,59 +1,59 @@
-# Camp Booking REST API (Go)
+# Camp Booking REST API
 
 Backend-сервис для бронирования детских лагерей.
 
-## 🚀 Функциональность
+## Функциональность
 
-* Регистрация и авторизация пользователей (JWT)
-* Управление профилями детей
-* Просмотр лагерей
-* Добавление лагерей в избранное
-* Бронирование лагеря для ребёнка
-* Middleware (логирование, recovery, auth)
-* Docker-окружение
-* Управление миграциями базы данных
-
----
-
-## 🧱 Стек технологий
-
-* Go
-* PostgreSQL
-* JWT
-* Docker
-* golang-migrate
+- Регистрация и авторизация пользователей (JWT)
+- Управление профилями детей
+- Просмотр лагерей
+- Добавление лагерей в избранное
+- Бронирование лагеря для ребёнка
+- Middleware (логирование, recovery, auth)
+- Docker-окружение
+- Управление миграциями базы данных
 
 ---
 
-## 📌 Основные endpoint'ы
+## Стек технологий
+
+- Go
+- PostgreSQL
+- JWT
+- Docker
+- golang-migrate
+
+---
+
+## Основные endpoint'ы
 
 ### Auth
 
-* POST `/auth/register`
-* POST `/auth/login`
-* GET `/auth/me`
+- POST `/auth/register`
+- POST `/auth/login`
+- GET `/auth/me`
 
 ### Children
 
-* POST `/children`
-* GET `/children`
-* PUT `/children/{id}`
+- POST `/children`
+- GET `/children`
+- PUT `/children/{id}`
 
 ### Camps
 
-* GET `/camps`
-* GET `/camps/{id}`
+- GET `/camps`
+- GET `/camps/{id}`
 
 ### Favorites
 
-* POST `/favorites/{campId}`
-* DELETE `/favorites/{campId}`
-* GET `/favorites`
+- POST `/favorites/{campId}`
+- DELETE `/favorites/{campId}`
+- GET `/favorites`
 
 ### Bookings
 
-* POST `/bookings`
-* GET `/bookings`
+- POST `/bookings`
+- GET `/bookings`
 
 ---
 
@@ -79,7 +79,7 @@ docker compose up --build app
 
 ---
 
-## 🔄 Управление миграциями
+## Управление миграциями
 
 Применить миграции:
 
