@@ -16,9 +16,9 @@ func NewCampRepository(db *sql.DB) *CampRepository {
 
 func (r *CampRepository) GetAll() ([]domain.Camp, error) {
 	query := `
-		SELECT id, title, location, price_per_day, booked_count, description,
-		       shift_duration_days, age_min, age_max, camp_type, food_type,
-		       created_at, updated_at
+		SELECT id, title, location, image_url, price_per_day, booked_count, description,
+			shift_duration_days, age_min, age_max, camp_type, food_type,
+			created_at, updated_at
 		FROM camps
 		ORDER BY id
 	`
@@ -38,6 +38,7 @@ func (r *CampRepository) GetAll() ([]domain.Camp, error) {
 			&camp.ID,
 			&camp.Title,
 			&camp.Location,
+			&camp.ImageURL,
 			&camp.PricePerDay,
 			&camp.BookedCount,
 			&camp.Description,
@@ -65,9 +66,9 @@ func (r *CampRepository) GetAll() ([]domain.Camp, error) {
 
 func (r *CampRepository) GetByID(id int64) (domain.Camp, error) {
 	query := `
-		SELECT id, title, location, price_per_day, booked_count, description,
-		       shift_duration_days, age_min, age_max, camp_type, food_type,
-		       created_at, updated_at
+		SELECT id, title, location, image_url, price_per_day, booked_count, description,
+			shift_duration_days, age_min, age_max, camp_type, food_type,
+			created_at, updated_at
 		FROM camps
 		WHERE id = $1
 	`
@@ -78,6 +79,7 @@ func (r *CampRepository) GetByID(id int64) (domain.Camp, error) {
 		&camp.ID,
 		&camp.Title,
 		&camp.Location,
+		&camp.ImageURL,
 		&camp.PricePerDay,
 		&camp.BookedCount,
 		&camp.Description,

@@ -1,5 +1,5 @@
 up:
-	docker compose up --build
+	docker compose up -d
 
 down:
 	docker compose down
@@ -8,7 +8,7 @@ reset:
 	docker compose down -v
 
 migrate-up:
-	docker compose run --rm --profile tools migrate up
+	docker compose --profile tools run --rm migrate up
 
 migrate-down:
 	docker compose run --rm --profile tools migrate down 1
