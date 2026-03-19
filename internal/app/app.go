@@ -27,6 +27,9 @@ func New(cfg config.Config) (*App, error) {
 	authService := service.NewAuthService(userRepo, cfg.JWTSecret)
 	authHandler := handler.NewAuthHandler(authService)
 
+	profileService := service.NewProfileService(userRepo)
+	profileHandler := handler.NewProfileHandler(profileService)
+
 	childRepo := postgres.NewChildRepository(db)
 	childService := service.NewChildService(childRepo)
 	childHandler := handler.NewChildHandler(childService)
@@ -43,7 +46,7 @@ func New(cfg config.Config) (*App, error) {
 	bookingService := service.NewBookingService(bookingRepo, childRepo, campRepo)
 	bookingHandler := handler.NewBookingHandler(bookingService)
 
-	router := NewRouter(authHandler, childHandler, campHandler, favoriteHandler,bookingHandler, cfg.JWTSecret)
+	router := NewRouter(authHandler, profileHandler, childHandler, campHandler, favoriteHandler, bookingHandler, cfg.JWTSecret)
 
 	return &App{
 		Config: cfg,

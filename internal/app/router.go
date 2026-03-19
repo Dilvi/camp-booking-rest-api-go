@@ -7,7 +7,7 @@ import (
 	"github.com/dilvi/camp-booking-rest-api-go/internal/middleware"
 )
 
-func NewRouter(authHandler *handler.AuthHandler, childHandler *handler.ChildHandler, campHandler *handler.CampHandler, favoriteHandler *handler.FavoriteHandler,bookingHandler *handler.BookingHandler, jwtSecret string) http.Handler {
+func NewRouter(authHandler *handler.AuthHandler, profileHandler *handler.ProfileHandler, childHandler *handler.ChildHandler, campHandler *handler.CampHandler, favoriteHandler *handler.FavoriteHandler,bookingHandler *handler.BookingHandler, jwtSecret string) http.Handler {
 	mux := http.NewServeMux()
 
 	mux.HandleFunc("/health", handler.HealthHandler)
@@ -54,6 +54,19 @@ func NewRouter(authHandler *handler.AuthHandler, childHandler *handler.ChildHand
 		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 	}
 	})))
+
+	mux.Handle("/profile", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodGet:
+		profileHandler.Get(w, r)
+	case http.MethodPut:
+		profileHandler.Update(w, r)
+	default:
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+	}
+	})))
+
+	mux.Handle("/profile/password", authMiddleware(http.HandlerFunc(profileHandler.UpdatePassword)))
 
 	handler := middleware.LoggingMiddleware(mux)
 	handler = middleware.RecoveryMiddleware(handler)

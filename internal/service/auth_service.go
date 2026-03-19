@@ -28,6 +28,7 @@ func (s *AuthService) Register(req dto.RegisterRequest) (domain.User, error) {
 		Phone:        req.Phone,
 		Email:        req.Email,
 		PasswordHash: hashedPassword,
+		AvatarURL:    "",
 		Role:         "parent",
 	}
 
