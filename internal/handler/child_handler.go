@@ -141,3 +141,33 @@ func (h *ChildHandler) Update(w http.ResponseWriter, r *http.Request) {
 	w.Header().Set("Content-Type", "application/json")
 	respond.JSON(w, http.StatusOK, resp)
 }
+
+func (h *ChildHandler) Delete(w http.ResponseWriter, r *http.Request) {
+	if r.Method != http.MethodDelete {
+		respond.Error(w, http.StatusMethodNotAllowed, "method not allowed")
+		return
+	}
+
+	claims, ok := middleware.GetUserFromContext(r.Context())
+	if !ok {
+		respond.Error(w, http.StatusUnauthorized, "unauthorized")
+		return
+	}
+
+	idStr := strings.TrimPrefix(r.URL.Path, "/children/")
+	childID, err := strconv.ParseInt(idStr, 10, 64)
+	if err != nil {
+		respond.Error(w, http.StatusBadRequest, "invalid child id")
+		return
+	}
+
+	err = h.childService.Delete(claims.UserID, childID)
+	if err != nil {
+		respond.Error(w, http.StatusInternalServerError, "failed to delete child")
+		return
+	}
+
+	respond.JSON(w, http.StatusOK, map[string]string{
+		"message": "child deleted successfully",
+	})
+}

@@ -29,7 +29,16 @@ func NewRouter(authHandler *handler.AuthHandler, profileHandler *handler.Profile
 			http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
 		}
 	})))
-	mux.Handle("/children/", authMiddleware(http.HandlerFunc(childHandler.Update)))
+	mux.Handle("/children/", authMiddleware(http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+	switch r.Method {
+	case http.MethodPut:
+		childHandler.Update(w, r)
+	case http.MethodDelete:
+		childHandler.Delete(w, r)
+	default:
+		http.Error(w, "method not allowed", http.StatusMethodNotAllowed)
+	}
+	})))
 
 	mux.Handle("/favorites", authMiddleware(http.HandlerFunc(favoriteHandler.List)))
 

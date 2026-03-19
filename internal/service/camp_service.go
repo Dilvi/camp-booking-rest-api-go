@@ -20,3 +20,7 @@ func (s *CampService) GetAll() ([]domain.Camp, error) {
 func (s *CampService) GetByID(id int64) (domain.Camp, error) {
 	return s.campRepo.GetByID(id)
 }
+
+func (s *ChildService) Delete(userID, childID int64) error {
+	return s.childRepo.Delete(userID, childID)
+}

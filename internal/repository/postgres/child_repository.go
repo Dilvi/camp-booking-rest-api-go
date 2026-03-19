@@ -122,3 +122,13 @@ func (r *ChildRepository) Update(child domain.Child) (domain.Child, error) {
 
 	return child, nil
 }
+
+func (r *ChildRepository) Delete(userID, childID int64) error {
+	query := `
+		DELETE FROM children
+		WHERE id = $1 AND user_id = $2
+	`
+
+	_, err := r.db.Exec(query, childID, userID)
+	return err
+}
