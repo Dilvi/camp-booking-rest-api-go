@@ -2,6 +2,7 @@ package handler
 
 import (
 	"encoding/json"
+	"errors"
 	"net/http"
 
 	"github.com/dilvi/camp-booking-rest-api-go/internal/dto"
@@ -32,6 +33,10 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 
 	user, err := h.authService.Register(req)
 	if err != nil {
+		if errors.Is(err, service.ErrUserAlreadyExists) {
+			respond.Error(w, http.StatusConflict, err.Error())
+			return
+		}
 		respond.Error(w, http.StatusInternalServerError, "failed to register user")
 		return
 	}
@@ -45,9 +50,7 @@ func (h *AuthHandler) Register(w http.ResponseWriter, r *http.Request) {
 		Role:      user.Role,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	respond.JSON(w, http.StatusOK, resp)
+	respond.JSON(w, http.StatusCreated, resp)
 }
 
 func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
@@ -72,8 +75,6 @@ func (h *AuthHandler) Login(w http.ResponseWriter, r *http.Request) {
 		Token: token,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusOK)
 	respond.JSON(w, http.StatusOK, resp)
 }
 
@@ -90,6 +91,5 @@ func (h *AuthHandler) Me(w http.ResponseWriter, r *http.Request) {
 		"role":    claims.Role,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	respond.JSON(w, http.StatusOK, resp)
 }

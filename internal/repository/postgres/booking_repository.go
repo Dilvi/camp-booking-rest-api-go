@@ -70,5 +70,52 @@ func (r *BookingRepository) GetAllByUserID(userID int64) ([]domain.Booking, erro
 		bookings = append(bookings, b)
 	}
 
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+
 	return bookings, nil
+}
+
+func (r *BookingRepository) GetByIDForUser(id, userID int64) (domain.Booking, error) {
+	query := `
+		SELECT id, user_id, child_id, camp_id, status, created_at, updated_at
+		FROM bookings
+		WHERE id = $1 AND user_id = $2
+	`
+
+	var b domain.Booking
+	err := r.db.QueryRow(query, id, userID).Scan(
+		&b.ID,
+		&b.UserID,
+		&b.ChildID,
+		&b.CampID,
+		&b.Status,
+		&b.CreatedAt,
+		&b.UpdatedAt,
+	)
+	if err != nil {
+		return domain.Booking{}, err
+	}
+
+	return b, nil
+}
+
+func (r *BookingRepository) ExistsActiveByUserAndCamp(userID, campID int64) (bool, error) {
+	query := `
+		SELECT EXISTS (
+			SELECT 1
+			FROM bookings
+			WHERE user_id = $1
+			  AND camp_id = $2
+			  AND status IN ('pending', 'confirmed')
+		)
+	`
+
+	var exists bool
+	if err := r.db.QueryRow(query, userID, campID).Scan(&exists); err != nil {
+		return false, err
+	}
+
+	return exists, nil
 }

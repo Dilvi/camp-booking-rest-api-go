@@ -1,0 +1,56 @@
+INSERT INTO bike_routes (
+    camp_id,
+    title,
+    location,
+    map_url,
+    route_points,
+    distance_km,
+    duration_minutes,
+    difficulty,
+    route_type,
+    elevation_gain_m,
+    description,
+    recommendations_context
+) VALUES
+(
+    1,
+    'Forest family loop',
+    'Domodedovo district',
+    'https://example.com/maps/forest-family-loop',
+    '[{"lat":55.4401,"lon":37.7612},{"lat":55.4455,"lon":37.7791},{"lat":55.4368,"lon":37.7904}]',
+    8.50,
+    55,
+    'easy',
+    'forest',
+    60,
+    'Short circular route through forest roads near the camp. Suitable for relaxed rides and first route practice.',
+    'Mostly shaded route. Some gravel sections after rain. Water refill is available only at the camp.'
+),
+(
+    2,
+    'Mountain viewpoint route',
+    'Krasnaya Polyana',
+    'https://example.com/maps/mountain-viewpoint-route',
+    '[{"lat":43.6815,"lon":40.2051},{"lat":43.6869,"lon":40.2238},{"lat":43.6941,"lon":40.2146}]',
+    12.20,
+    90,
+    'medium',
+    'mountain',
+    240,
+    'Scenic route with a moderate climb and several viewpoints. Requires stable braking and basic hill riding skills.',
+    'Weather changes quickly. Helmets and windproof clothing are recommended. Avoid after heavy rain.'
+),
+(
+    3,
+    'Sea promenade ride',
+    'Sochi coast',
+    'https://example.com/maps/sea-promenade-ride',
+    '[{"lat":43.5855,"lon":39.7231},{"lat":43.5796,"lon":39.7384},{"lat":43.5724,"lon":39.7518}]',
+    6.70,
+    45,
+    'easy',
+    'urban',
+    20,
+    'Flat coastal route near the sea promenade. Good for beginners and short evening rides.',
+    'Crowded during weekends. Use lights in the evening and keep low speed near pedestrians.'
+);

@@ -1,20 +1,25 @@
 package service
 
 import (
+	"errors"
+
 	"github.com/dilvi/camp-booking-rest-api-go/internal/domain"
 	"github.com/dilvi/camp-booking-rest-api-go/internal/dto"
 	"github.com/dilvi/camp-booking-rest-api-go/internal/repository/postgres"
 	"github.com/dilvi/camp-booking-rest-api-go/internal/utils"
+	"github.com/lib/pq"
 )
 
 type AuthService struct {
-	userRepo *postgres.UserRepository
+	userRepo  *postgres.UserRepository
 	jwtSecret string
 }
 
 func NewAuthService(userRepo *postgres.UserRepository, jwtSecret string) *AuthService {
 	return &AuthService{userRepo: userRepo, jwtSecret: jwtSecret}
 }
+
+var ErrUserAlreadyExists = errors.New("user with this email or phone already exists")
 
 func (s *AuthService) Register(req dto.RegisterRequest) (domain.User, error) {
 	hashedPassword, err := utils.HashPassword(req.Password)
@@ -34,6 +39,10 @@ func (s *AuthService) Register(req dto.RegisterRequest) (domain.User, error) {
 
 	createdUser, err := s.userRepo.Create(user)
 	if err != nil {
+		var pqErr *pq.Error
+		if errors.As(err, &pqErr) && pqErr.Code == "23505" {
+			return domain.User{}, ErrUserAlreadyExists
+		}
 		return domain.User{}, err
 	}
 

@@ -6,6 +6,7 @@ import (
 
 	"github.com/dilvi/camp-booking-rest-api-go/internal/config"
 	"github.com/dilvi/camp-booking-rest-api-go/internal/database"
+	"github.com/dilvi/camp-booking-rest-api-go/internal/gigachat"
 	"github.com/dilvi/camp-booking-rest-api-go/internal/handler"
 	"github.com/dilvi/camp-booking-rest-api-go/internal/repository/postgres"
 	"github.com/dilvi/camp-booking-rest-api-go/internal/service"
@@ -44,9 +45,21 @@ func New(cfg config.Config) (*App, error) {
 
 	bookingRepo := postgres.NewBookingRepository(db)
 	bookingService := service.NewBookingService(bookingRepo, childRepo, campRepo)
-	bookingHandler := handler.NewBookingHandler(bookingService)
 
-	router := NewRouter(authHandler, profileHandler, childHandler, campHandler, favoriteHandler, bookingHandler, cfg.JWTSecret)
+	bikeRouteRepo := postgres.NewBikeRouteRepository(db)
+	gigachatClient := gigachat.NewClient(gigachat.Config{
+		AuthKey:            cfg.GigaChatAuthKey,
+		Scope:              cfg.GigaChatScope,
+		Model:              cfg.GigaChatModel,
+		OAuthURL:           cfg.GigaChatOAuthURL,
+		ChatCompletionsURL: cfg.GigaChatCompletionsURL,
+		InsecureSkipVerify: cfg.GigaChatInsecureSkipVerify,
+	})
+	bikeRouteService := service.NewBikeRouteService(bikeRouteRepo, bookingRepo, gigachatClient)
+	bikeRouteHandler := handler.NewBikeRouteHandler(bikeRouteService)
+	bookingHandler := handler.NewBookingHandler(bookingService, bikeRouteService)
+
+	router := NewRouter(authHandler, profileHandler, childHandler, campHandler, favoriteHandler, bookingHandler, bikeRouteHandler, cfg.JWTSecret)
 
 	return &App{
 		Config: cfg,

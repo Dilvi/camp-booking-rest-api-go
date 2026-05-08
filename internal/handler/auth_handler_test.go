@@ -5,6 +5,7 @@ import (
 	"encoding/json"
 	"net/http"
 	"net/http/httptest"
+	"os"
 	"testing"
 	"time"
 
@@ -29,9 +30,17 @@ type registerResponse struct {
 	Role      string `json:"role"`
 }
 
+type registerResponseEnvelope struct {
+	Data registerResponse `json:"data"`
+}
+
 func TestRegisterHandler(t *testing.T) {
+	if os.Getenv("RUN_DB_TESTS") != "1" {
+		t.Skip("set RUN_DB_TESTS=1 to run database integration tests")
+	}
+
 	t.Setenv("APP_PORT", "8080")
-	t.Setenv("DB_HOST", "localhost")
+	t.Setenv("DB_HOST", "127.0.0.1")
 	t.Setenv("DB_PORT", "5432")
 	t.Setenv("DB_USER", "postgres")
 	t.Setenv("DB_PASSWORD", "postgres")
@@ -72,11 +81,12 @@ func TestRegisterHandler(t *testing.T) {
 		t.Fatalf("expected status %d, got %d, body: %s", http.StatusCreated, rec.Code, rec.Body.String())
 	}
 
-	var resp registerResponse
-	if err := json.NewDecoder(rec.Body).Decode(&resp); err != nil {
+	var envelope registerResponseEnvelope
+	if err := json.NewDecoder(rec.Body).Decode(&envelope); err != nil {
 		t.Fatalf("failed to decode response: %v", err)
 	}
 
+	resp := envelope.Data
 	if resp.ID == 0 {
 		t.Fatal("expected non-zero user id")
 	}

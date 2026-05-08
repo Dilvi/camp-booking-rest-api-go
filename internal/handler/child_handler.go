@@ -55,9 +55,7 @@ func (h *ChildHandler) Create(w http.ResponseWriter, r *http.Request) {
 		Allergy:   child.Allergy,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
-	w.WriteHeader(http.StatusCreated)
-	respond.JSON(w, http.StatusOK, resp)
+	respond.JSON(w, http.StatusCreated, resp)
 }
 
 func (h *ChildHandler) List(w http.ResponseWriter, r *http.Request) {
@@ -92,7 +90,6 @@ func (h *ChildHandler) List(w http.ResponseWriter, r *http.Request) {
 		})
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	respond.JSON(w, http.StatusOK, resp)
 }
 
@@ -138,7 +135,6 @@ func (h *ChildHandler) Update(w http.ResponseWriter, r *http.Request) {
 		Allergy:   child.Allergy,
 	}
 
-	w.Header().Set("Content-Type", "application/json")
 	respond.JSON(w, http.StatusOK, resp)
 }
 
